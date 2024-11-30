@@ -1,0 +1,22 @@
+#+title: Readme
+* Контейнеризация разработки
+*** Создать тестовую программу
+*** Запуск программы
+*** Запуск тестов
+*** Запуск дебаггера
+*** Запуск профайлера
+*** Добавить библиотеку
+*** Добавить сервис
+*** LSP-сервер
+*** Что-то еще?
+*** Запуск всего этого в pycharm, vscode, emacs
+* Вариант с devcontainers - то что надо?
+** Ссылки на devcontainer
+https://github.com/nohzafk/devcontainer-cli-port-forwarder
+https://github.com/nohzafk/devcontainer-feature-emacs-lsp-bridge?tab=readme-ov-file
+https://github.com/nohzafk/emacs-devcontainer?tab=readme-ov-file
+https://github.com/manateelazycat/lsp-bridge?tab=readme-ov-file
+** Итого:
+1. dev containers это носимые настройки  vscode
+2. в докере появились похожие настройки для сборки в новых версиях
+3. devfile умер

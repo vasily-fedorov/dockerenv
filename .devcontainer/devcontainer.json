@@ -1,0 +1,26 @@
+{
+  "name": "Hello Dev Container",
+  "image": "mcr.microsoft.com/devcontainers/python:3.11",
+  "remoteUser": "root",
+//    "dockerFile": "Dockerfile",
+//   "settings": {
+//     "python.pythonPath": "/usr/local/bin/python3"
+//   },
+  "features": {
+    "ghcr.io/nohzafk/devcontainer-feature-emacs-lsp-bridge/gleam:latest": {},
+    "ghcr.io/nohzafk/devcontainer-feature-emacs-lsp-bridge/pyright-background-analysis_ruff:latest": {},
+    "ghcr.io/devcontainers/features/nix:1": {
+        "packages": "ripgrep"
+    }
+  },
+  "extensions": [
+  ],
+  "forwardPorts": [
+        9997,
+        9998,
+        9999
+    ],
+ // "initializeCommand": "python3 .devcontainer/devcontainer-cli-port-forwarder/forwarder.py verbose &",
+  "onCreateCommand": "apt update && apt install -y socat && apt -y install less",// не сработало
+  "postCreateCommand": "pip install -r requirements.txt"
+}
