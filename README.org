@@ -1,8 +1,18 @@
 #+title: Readme
 #+setupfile: ~/org/conf/setupfile.org
 
+
+* Полезные ссылки
+** https://pythonspeed.com/articles/base-image-python-docker-images/
+Какой образ python выбирать
+** https://docs.docker.com/reference/cli/docker/compose/
+cli reference
+** https://dev.to/code42cate/say-goodbye-to-docker-volumes-j9l
+** https://docs.docker.com/compose/how-tos/file-watch/#compose-watch-versus-bind-mounts
+watxh дополняет bind mounts
 * Контейнеризация разработки
-** Полезные ссылки
+Не нужен минимальный образ для бэкенда большого приложения
+
 ** Создать тестовую программу
 *** Код
 #+begin_src python
@@ -239,13 +249,20 @@ django-admin startproject example .
 Следуем:
 https://docs.djangoproject.com/en/5.1/intro/tutorial01/
 Запускается без докера
+#+begin_src shell
+python manage.py runserver 0.0.0.0:8000
+#+end_src
+И в докере:
+docker compose up -w
 ** Подключиться к докеру
+docker exec -it <container> bash
+** Добавить библиотеку
+Можно вписать в requirements.txt на хосте, но проблема в том что зависимости раскрываются и фиксируются в докере.
 ** Запуск программы
 ** Запуск не от рута
 ** Запуск тестов
 ** Запуск дебаггера
 ** Запуск профайлера
-** Добавить библиотеку
 ** Добавить сервис - compose.yaml
 ** LSP-сервер
 ** Что-то еще?
