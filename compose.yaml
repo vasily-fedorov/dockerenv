@@ -9,20 +9,22 @@
 # https://github.com/docker/awesome-compose
 services:
   server:
+    container_name: pydev
     volumes:
       - type: bind
         source: ./
         target: /app/
     build:
       context: .
-    develop:
-      watch:
-        - path: ./
-          action: sync
-          target: /app/
+#    develop:
+#      watch:
+#        - path: ./
+#          action: sync
+#          target: /app/
     ports:
       - 8000:8000
 
+      
 #volumes:
 #  - ./:/app
   
