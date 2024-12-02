@@ -1,15 +1,42 @@
 #+title: Readme
 * Контейнеризация разработки
-*** Создать тестовую программу
-*** Запуск программы
-*** Запуск тестов
-*** Запуск дебаггера
-*** Запуск профайлера
-*** Добавить библиотеку
-*** Добавить сервис
-*** LSP-сервер
-*** Что-то еще?
-*** Запуск всего этого в pycharm, vscode, emacs
+** Создать тестовую программу
+*** Код
+#+begin_src python
+import yandex_tracker_client
+
+print("Hello")
+print("world!")
+
+def fibonacci(n):
+    if n < 0:
+        print("Incorrect input")
+    elif n == 0:
+        return 0
+    elif n == 1 or n == 2:
+        return 1
+    else:
+        return fibonacci(n-1) + fibonacci(n-2)
+
+print(fibonacci(10))
+#+end_src main.py
+*** Создать requirements.txt
+#+begin_src
+yandex_tracker_client==2.8
+#+end_src
+*** Запускаем в python 3.11
+** Сделать Dockerfile
+Проверить запуск и работу с одним контейнером
+** Запуск программы
+** Запуск не от рута
+** Запуск тестов
+** Запуск дебаггера
+** Запуск профайлера
+** Добавить библиотеку
+** Добавить сервис - compose.yaml
+** LSP-сервер
+** Что-то еще?
+** Запуск всего этого в pycharm, vscode, emacs
 * Вариант с devcontainers - то что надо?
 ** Ссылки на devcontainer
 https://github.com/nohzafk/devcontainer-cli-port-forwarder
