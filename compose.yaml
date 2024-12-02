@@ -9,6 +9,11 @@
 # https://github.com/docker/awesome-compose
 services:
   server:
+    volumes:
+      - type: bind
+        source: ./
+        target: /app/
+
     build:
       context: .
     develop:
