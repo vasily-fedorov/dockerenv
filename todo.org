@@ -1,0 +1,33 @@
+#+title: Todo
+#+TODO: TODO(!) | DONE(!) CANCEL(!)
+#+ARCHIVE: %s_done::
+
+* Задачи
+** TODO [#A] Запуск дебаггера
+*** debug кода в контейнере
+*** debug контейнеризированным дебаггером
+** [#B] Запуск профайлера
+** Запуск celery
+** 2 порта: 1 наружу, один во внутренней сети
+** Запуск анализатора кода
+*** Анализ кода в контейнере
+*** Анализатор кода сам в контейнере
+** Добавить сервис - compose.yaml
+*** postgresql+pgadmin
+*** celery
+*** clickhouse
+*** manticore
+** CANCEL Запуск тестов
+*** python manage.py test
+** CANCEL LSP-сервер
+:LOGBOOK:
+- State "CANCEL"     from "DONE"       [2024-12-19 Thu 17:16]
+- State "DONE"       from "TODO"       [2024-12-19 Thu 17:16]
+- State "TODO"       from              [2024-12-19 Thu 17:16]
+:END:
+LSP-сервер анализирует код, ему надо (видимо) virtualenv и собственно код ПО, в контейнер можно не лезть
+** Что-то еще?
+emacs daemon
+** Добавить devcontainer
+** Запуск всего этого в pycharm, vscode, emacs
+** Пример какого-нибудь питоньего пакета

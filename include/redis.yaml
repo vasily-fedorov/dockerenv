@@ -1,0 +1,8 @@
+services:
+  redis:
+    container_name: redis
+    image: redis:alpine
+    networks:
+     - default
+    volumes:
+     - ./data/redis:/data

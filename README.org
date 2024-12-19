@@ -1,7 +1,56 @@
 #+title: Readme
 #+setupfile: ~/org/conf/setupfile.org
 
+compose это язык описания архитектуры приложения
+сейчас везде используется как пример для деплоя, хотя есть пример с рисованием картинки:
+Это скелет решения, а не готовое решение.
+docker init еще есть, но там совсем базовые вещи.
+devcontainers - носимые настройки vscode
+* Как работает
+** Настройки окружения
+Лежат в .env:
 
+** Сборка бэкенда
+build.sh - запускается на бэкенде для сборки бэкенда
+** Постоянные данные
+data
+ * История bash :: data/bash_history
+* О чем это
+** Проблема
+1. Долгое подключение разработчиков для старта работы
+2. Воспроизводимость результатов разработки - "у меня работает".
+3. Изоляция devops от разработки
+
+Хочется решить ее за счет принципа "работает == работает в compose"
+*Вопрос*: как докеризовать разработку?
+** Цель
+1. Изоляция кода от архитектуры приложения: postgresql+pgadmin, redis, celery, sentry(?), manticore, clickhouse, opensearch и проч.
+2. Изоляция от непитоньих библиотек на бэкенде. (например, хитрые зависимости от GDAL и проч)
+3. Изоляция devops от разработки: запускается в compose, значит дальше дело devops донести до прода.
+Уже есть слои изоляции - virtualenv, pyenv, но они эти проблемы не решают.
+Все туториалы по докеру про запуск питоньего скрипта или про деплой в prod.
+** Предположения
+1. Запускаем все на одной машине
+2. security это не проблема
+3. requirements.txt в корне проекта
+4. Настройка всяких хабов - дело devops по уже готовому проекту
+5. Все порты торчат наружу - для удобства разработки
+** Решение
+1. Простая контейнеризация python-проекта: скачать репозиторий проекта, скачать репозиторий контейнеризатора, одной командой запустить его в докере
+2. Простое подключение других сервисов: БД, celery, redis, nginx, manticore, opensearch, clickhouse,
+   (аналогично awesome-compose, инструкциями extends, include, merge)
+3. Отдельный от devops привычный dev-репозиторий для разработки на Python с установленными инструментами
+   С привычными правилами работы - отладкой, тестированием, профилированием.
+4. Логи в одно место со всех подсистем (можно посмотреть на docker logs, но логами надо еще и меняться)
+* Детали
+1. Запуск не от рута и пробрасывание пользователя в docker
+2. Постоянная история bash
+3. Установленные инструменты - debugpy? powerline, git, pyenv?
+4. Отдельный bind volume для хранения всех постоянных данных - запускаемся на одной машине
+* Мелочи
+5. Нельзя файлы из home прицеплять - для воспроизводимости разработки, точнее прицеплять можно конкретные
+6. security - проблема devops, однако не от рута - похоже на локальную разработку
+7. Базовый образ - Ubuntu 24.04 LTS, а не "минимальный" образ с Python
 * Полезные ссылки
 ** https://pythonspeed.com/articles/base-image-python-docker-images/
 Какой образ python выбирать
@@ -10,268 +59,12 @@ cli reference
 ** https://dev.to/code42cate/say-goodbye-to-docker-volumes-j9l
 ** https://docs.docker.com/compose/how-tos/file-watch/#compose-watch-versus-bind-mounts
 watxh дополняет bind mounts
+** https://vsupalov.com/docker-arg-env-variable-guide/
 * Проблема
 При включенном watch файл после изменения на хосте получает UID пользователя внутри докера
 * Контейнеризация разработки
 Не нужен минимальный образ для бэкенда большого приложения
 
-** Создать тестовую программу
-*** Код
-#+begin_src python
-import yandex_tracker_client
-
-print("Hello")
-print("world!")
-
-def fibonacci(n):
-    if n < 0:
-        print("Incorrect input")
-    elif n == 0:
-        return 0
-    elif n == 1 or n == 2:
-        return 1
-    else:
-        return fibonacci(n-1) + fibonacci(n-2)
-
-print(fibonacci(10))
-#+end_src main.py
-*** Создать requirements.txt
-#+begin_src
-yandex_tracker_client==2.8
-#+end_src
-*** Запускаем в python 3.11
-** Проверить запуск и работу скрипта с одним Dockerfile
-*** Сделать Dockerfile
-Проверить запуск и работу с одним контейнером
-#+begin_src docker
-FROM python:3.11.10-bullseye AS builder
-WORKDIR /usr/src/app
-ENV PYTHONDONTWRITEBYTECODE=1
-ENV PYTHONUNBUFFERED=1
-
-RUN python -m venv /opt/venv
-ENV PATH="/opt/venv/bin:$PATH"
-
-COPY requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt
-
-FROM python:3.11.10-bullseye
-COPY --from=builder /opt/venv /opt/venv
-WORKDIR /usr/src/app
-COPY . .
-ENV PATH="/opt/venv/bin:$PATH"
-CMD [ "python", "./main.py" ]
-#+end_src
-*** Запуск одного скрипта
-#+begin_src shell
-docker build -t fvv/hello .
-docker run fvv/hello:latest
-#+end_src
-** Запуск в compose
-*** docker init
-Создает 4 файла после выбора проекта - на python, версию python и командную стрку для запуска:
-- Dockerfile
-  #+begin_src
-# syntax=docker/dockerfile:1
-
-# Comments are provided throughout this file to help you get started.
-# If you need more help, visit the Dockerfile reference guide at
-# https://docs.docker.com/go/dockerfile-reference/
-
-# Want to help us make this template better? Share your feedback here: https://forms.gle/ybq9Krt8jtBL3iCk7
-
-ARG PYTHON_VERSION=3.11.10
-FROM python:${PYTHON_VERSION}-slim as base
-
-# Prevents Python from writing pyc files.
-ENV PYTHONDONTWRITEBYTECODE=1
-
-# Keeps Python from buffering stdout and stderr to avoid situations where
-# the application crashes without emitting any logs due to buffering.
-ENV PYTHONUNBUFFERED=1
-
-WORKDIR /app
-
-# Create a non-privileged user that the app will run under.
-# See https://docs.docker.com/go/dockerfile-user-best-practices/
-ARG UID=10001
-RUN adduser \
-    --disabled-password \
-    --gecos "" \
-    --home "/nonexistent" \
-    --shell "/sbin/nologin" \
-    --no-create-home \
-    --uid "${UID}" \
-    appuser
-
-# Download dependencies as a separate step to take advantage of Docker's caching.
-# Leverage a cache mount to /root/.cache/pip to speed up subsequent builds.
-# Leverage a bind mount to requirements.txt to avoid having to copy them into
-# into this layer.
-RUN --mount=type=cache,target=/root/.cache/pip \
-    --mount=type=bind,source=requirements.txt,target=requirements.txt \
-    python -m pip install -r requirements.txt
-
-# Switch to the non-privileged user to run the application.
-USER appuser
-
-# Copy the source code into the container.
-COPY . .
-
-# Expose the port that the application listens on.
-EXPOSE 8000
-
-# Run the application.
-CMD python manage.py runserver 0.0.0.0:8000
-  #+end_src
-- compose.yaml
-  #+begin_src yaml
-# Comments are provided throughout this file to help you get started.
-# If you need more help, visit the Docker Compose reference guide at
-# https://docs.docker.com/go/compose-spec-reference/
-
-# Here the instructions define your application as a service called "server".
-# This service is built from the Dockerfile in the current directory.
-# You can add other services your application may depend on here, such as a
-# database or a cache. For examples, see the Awesome Compose repository:
-# https://github.com/docker/awesome-compose
-services:
-  server:
-    build:
-      context: .
-    ports:
-      - 8000:8000
-
-# The commented out section below is an example of how to define a PostgreSQL
-# database that your application can use. `depends_on` tells Docker Compose to
-# start the database before your application. The `db-data` volume persists the
-# database data between container restarts. The `db-password` secret is used
-# to set the database password. You must create `db/password.txt` and add
-# a password of your choosing to it before running `docker compose up`.
-#     depends_on:
-#       db:
-#         condition: service_healthy
-#   db:
-#     image: postgres
-#     restart: always
-#     user: postgres
-#     secrets:
-#       - db-password
-#     volumes:
-#       - db-data:/var/lib/postgresql/data
-#     environment:
-#       - POSTGRES_DB=example
-#       - POSTGRES_PASSWORD_FILE=/run/secrets/db-password
-#     expose:
-#       - 5432
-#     healthcheck:
-#       test: [ "CMD", "pg_isready" ]
-#       interval: 10s
-#       timeout: 5s
-#       retries: 5
-# volumes:
-#   db-data:
-# secrets:
-#   db-password:
-#     file: db/password.txt
-  #+end_src
-- .dockerignore
-  #+begin_src
-# Include any files or directories that you don't want to be copied to your
-# container here (e.g., local build artifacts, temporary files, etc.).
-#
-# For more help, visit the .dockerignore file reference guide at
-# https://docs.docker.com/go/build-context-dockerignore/
-
-**/.DS_Store
-**/__pycache__
-**/.venv
-**/.classpath
-**/.dockerignore
-**/.env
-**/.git
-**/.gitignore
-**/.project
-**/.settings
-**/.toolstarget
-**/.vs
-**/.vscode
-**/*.*proj.user
-**/*.dbmdl
-**/*.jfm
-**/bin
-**/charts
-**/docker-compose*
-**/compose.y*ml
-**/Dockerfile*
-**/node_modules
-**/npm-debug.log
-**/obj
-**/secrets.dev.yaml
-**/values.dev.yaml
-LICENSE
-README.md
-  #+end_src
-- README.Docker.md
-  #+begin_src md
-### Building and running your application
-
-When you're ready, start your application by running:
-`docker compose up --build`.
-
-Your application will be available at http://localhost:8000.
-
-### Deploying your application to the cloud
-
-First, build your image, e.g.: `docker build -t myapp .`.
-If your cloud uses a different CPU architecture than your development
-machine (e.g., you are on a Mac M1 and your cloud provider is amd64),
-you'll want to build the image for that platform, e.g.:
-`docker build --platform=linux/amd64 -t myapp .`.
-
-Then, push it to your registry, e.g. `docker push myregistry.com/myapp`.
-
-Consult Docker's [getting started](https://docs.docker.com/go/get-started-sharing/)
-docs for more detail on building and pushing.
-
-### References
-\* [Docker's Python guide](https://docs.docker.com/language/python/)
-  #+end_src
-Итог: запускается как скрипт
-** Запуск минимального сервера
-*** Добавил watch и develop в compose
-*** Минимальный Django проект
-Системный питон 3.12, virtual env  и минимальный проект
-#+begin_src
-pyenv virtualenv devcontainers example
-pyenv local devcontainers_example
-pip install django
-django-admin startproject example .
-#+end_src
-Следуем:
-https://docs.djangoproject.com/en/5.1/intro/tutorial01/
-Запускается без докера
-#+begin_src shell
-python manage.py runserver 0.0.0.0:8000
-#+end_src
-И в докере:
-docker compose up -w
-** Подключиться к докеру
-docker exec -it <container> bash
-** Добавить библиотеку снаружи
-Можно вписать в requirements.txt на хосте, но проблема в том что зависимости раскрываются и фиксируются в докере.
-** Поставить библиотеку внутри
-** Правки изнутри наружу
-** DONE Запуск программы
-** DONE Запуск не от рута
-** Подтягивать историю bash
-** Запуск тестов
-** Запуск дебаггера
-** Запуск профайлера
-** Добавить сервис - compose.yaml
-** LSP-сервер
-** Что-то еще?
-** Запуск всего этого в pycharm, vscode, emacs
 * CANCEL Вариант с devcontainers - то что надо?
 ** Ссылки на devcontainer
 https://github.com/nohzafk/devcontainer-cli-port-forwarder
