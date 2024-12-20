@@ -2,13 +2,14 @@
 # https://github.com/docker/awesome-compose
 include:
   - include/redis.yaml
-  - include/manticore.yaml
+#  - include/manticore.yaml
   
 services:
   server:
     container_name: pydev
     volumes:
       - ${PROJECT}:/usr/src
+#      - ./data/venv:/opt/venv
       - ./data/.bash_history:/home/$USER/.bash_history
     build:
       context: .

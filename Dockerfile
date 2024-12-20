@@ -1,6 +1,6 @@
 # syntax=docker/dockerfile:1
-ARG PYTHON_VERSION
-FROM python:${PYTHON_VERSION}-slim as base
+ARG PYTHON_VERSION=3.11.10
+FROM python:${PYTHON_VERSION}-slim AS base
 ARG USER_ID
 ARG USER_NAME
 
@@ -14,7 +14,6 @@ ENV PYTHONUNBUFFERED=1
 # Create a non-privileged user that the app will run under.
 RUN <<EOF
     adduser --disabled-password --uid $USER_ID $USER_NAME
-    mkdir /ert
 EOF
 # Download dependencies as a separate step to take advantage of Docker's caching.
 # Leverage a cache mount to /root/.cache/pip to speed up subsequent builds.
@@ -44,4 +43,4 @@ EXPOSE 8000
 # Run the application.
 ENTRYPOINT ["python"]
 CMD ["manage.py", "runserver", "0.0.0.0:8000"]
-#CMD python main.py
+#CMD ["main.py"]
