@@ -20,6 +20,8 @@ services:
         PYTHON_VERSION: $PYTHON_VERSION
     ports:
       - 8000:8000
+      - 5678:5678
+    pid: host
 #networks:
 #  public:
 #  private:

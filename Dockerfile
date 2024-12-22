@@ -1,9 +1,10 @@
+#!/usr/bin/env -S docker build . --tag=pydev --network=host --file
 # syntax=docker/dockerfile:1
 ARG PYTHON_VERSION=3.11.10
 FROM python:${PYTHON_VERSION}-slim AS base
-ARG USER_ID
-ARG USER_NAME
-
+ARG USER_ID=1002
+ARG USER_NAME=fvv
+ARG PROJECT=.
 # Prevents Python from writing pyc files.
 ENV PYTHONDONTWRITEBYTECODE=1
 
@@ -26,11 +27,13 @@ WORKDIR /tmp
 COPY ./build.sh ./build.sh
 RUN sh build.sh
 # Copy the source code into the container.
-
+#RUN --mount=type=bind,source=data/venv,target=/opt/venv
 RUN python -m venv /opt/venv
 ENV PATH="/opt/venv/bin:$PATH"
 COPY $PROJECT/requirements.txt .
 RUN pip install -r requirements.txt
+RUN pip install debugpy
+
 #COPY ./requirements.txt ./requirements.txt
 #RUN pip install -r requirements.txt
 WORKDIR /usr/src
@@ -39,8 +42,9 @@ USER $USER_NAME
 
 # Expose the port that the application listens on.
 EXPOSE 8000
-
+EXPOSE 5678
 # Run the application.
 ENTRYPOINT ["python"]
-CMD ["manage.py", "runserver", "0.0.0.0:8000"]
+CMD ["-m","debugpy","--listen","0.0.0.0:5678", "manage.py", "runserver", "0.0.0.0:8000"]
+#CMD ["manage.py", "runserver", "0.0.0.0:8000"]
 #CMD ["main.py"]
