@@ -5,8 +5,6 @@ services:
     environment:
       - EXTRA=1
     restart: always
-#    networks:
-#      - private
     ports:
       - 9306:9306
       - 9308:9308
@@ -19,5 +17,5 @@ services:
         soft: -1
         hard: -1
     volumes:
-      - ./data/manticore:/var/lib/manticore
+      - ../data/manticore:/var/lib/manticore
 #      - ./manticore.conf:/etc/manticoresearch/manticore.conf # uncomment if you use a custom config
