@@ -6,8 +6,7 @@ services:
   server:
     container_name: pydev
     volumes:
-      - ${PROJECT}:/home/$USER/project
-#      - ./data/venv:/opt/venv
+      - ./${PROJECT}:/home/$USER/${PROJECT}
       - ./data/.bash_history:/home/$USER/.bash_history
     build:
       context: .
@@ -16,16 +15,16 @@ services:
         USER_ID: $UID
         USER_NAME: $USER
         PYTHON_VERSION: $PYTHON_VERSION
-#        IMAGE: ubuntu/python:3.10-22.04_stable
         IMAGE: ubuntu:24.04
+        PROJECT: ${PROJECT}
     ports:
       - 8000:8000
       - 5678:5678 # for debugpy
-    pid: host
+#    pid: host
 #networks:
 #  public:
 #  private:
-# db redis rabbitmq celery frontend
+# TODO db rabbitmq celery frontend
 # The commented out section below is an example of how to define a PostgreSQL
 # database that your application can use. `depends_on` tells Docker Compose to
 # start the database before your application. The `db-data` volume persists the
