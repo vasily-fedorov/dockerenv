@@ -1,5 +1,3 @@
-#For examples, see the Awesome Compose repository:
-# https://github.com/docker/awesome-compose
 include:
   - include/redis.yaml
 #  - include/manticore.yaml
@@ -8,7 +6,7 @@ services:
   server:
     container_name: pydev
     volumes:
-      - ${PROJECT}:/usr/src
+      - ${PROJECT}:/home/$USER/project
 #      - ./data/venv:/opt/venv
       - ./data/.bash_history:/home/$USER/.bash_history
     build:
@@ -18,9 +16,11 @@ services:
         USER_ID: $UID
         USER_NAME: $USER
         PYTHON_VERSION: $PYTHON_VERSION
+#        IMAGE: ubuntu/python:3.10-22.04_stable
+        IMAGE: ubuntu:24.04
     ports:
       - 8000:8000
-      - 5678:5678
+      - 5678:5678 # for debugpy
     pid: host
 #networks:
 #  public:

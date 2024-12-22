@@ -16,7 +16,7 @@ lsp:
     #
     # source:
     # https://stackoverflow.com/questions/17066169/retrieve-keys-from-hash-table-sorted-by-the-values-efficiently
-#    server: server-id-of-the-base-server
+    server: pylsp #server-id-of-the-base-server
     # an (optional) array of parameters (docker or podman) to launch the image with
     # initially intended to host the '--userns' parameter
     # NOTE: 'launch_parameters' are not used with 'container' subtype servers
@@ -39,7 +39,7 @@ lsp:
     # in this case the 'lsp-docker' ('server' section) image name is used
     enabled: true # you can explicitly disable 'dap-docker' by using 'false'
     provider: "python" #<your default language debug provider, double quoted string>
-    template: "Python :: Docker" #<your default language debug template, double quoted string>
+    template: "EMACS Python Debugger: Remote Attach" #<your default language debug template, double quoted string>
 #    launch_command: <an explicit command if you want to override a default one provided by the debug provider>
     # e.g. if you have installed a debug server in a different directory, not used with 'container' subtype debuggers
 # # single server configuration
