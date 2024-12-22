@@ -1,5 +1,0 @@
-#services:
-#  server:
-#    volumes:
-#      - /dev/null:/usr/src/.git/
-#      - /dev/null:/usr/src/.dockerignore
