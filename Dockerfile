@@ -25,11 +25,11 @@ WORKDIR /home/$USER_NAME
 COPY ./build.sh ./build.sh
 RUN sh build.sh
 USER $USER_NAME
-ENV PYENV_ROOT /home/$USER_NAME/.pyenv
-ENV PATH $PYENV_ROOT/shims:$PYENV_ROOT/bin:$PATH
-RUN pyenv global $PYTHON_VERSION && pyenv rehash
+ENV PYENV_ROOT=/home/$USER_NAME/.pyenv
+ENV PATH=$PYENV_ROOT/shims:$PYENV_ROOT/bin:$PATH
 WORKDIR /home/$USER_NAME/$PROJECT
 RUN curl https://pyenv.run | bash && CC=gcc pyenv install $PYTHON_VERSION
+RUN pyenv global $PYTHON_VERSION && pyenv rehash
 COPY $PROJECT/requirements.txt .
 RUN pyenv virtualenv $PYTHON_VERSION $PROJECT
 
@@ -41,7 +41,7 @@ RUN pip install debugpy
 EXPOSE 8000
 EXPOSE 5678
 # Run the application.
-ENTRYPOINT ["bash"]
+#ENTRYPOINT ["bash"]
 #CMD ["-m","debugpy","--listen","0.0.0.0:5678","--wait-for-client", "main.py"]
 #CMD ["-m","debugpy","--listen","0.0.0.0:5678", "manage.py", "runserver", "0.0.0.0:8000"]
 CMD python manage.py migrate && python manage.py runserver 0.0.0.0:8000
