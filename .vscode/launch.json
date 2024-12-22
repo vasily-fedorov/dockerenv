@@ -5,5 +5,49 @@
   "connect": {
     "host": "localhost",
     "port": 5678
-  }
+  },
+  "configurations": [
+    {
+      "name": "VSCODE Python Debugger: Django",
+      "type": "debugpy",
+      "request": "launch",
+      "args": [
+        "runserver"
+      ],
+      "django": true,
+      "autoStartBrowser": false,
+      "program": "${workspaceFolder}/manage.py"
+    },
+    {
+      "name": " VSCODE Python Debugger: Remote Attach",
+      "type": "debugpy",
+      "request": "attach",
+      "connect": {
+        "host": "localhost",
+        "port": 5678
+      },
+      "pathMappings": [
+        {
+          "localRoot": "${workspaceFolder}",
+          "remoteRoot": "."
+        }
+      ]
+    },
+        {
+      "name": "EMACS Python Debugger: Remote Attach",
+      "type": "python",
+      "request": "attach",
+      "connect": {
+        "host": "localhost",
+        "port": 5678
+      },
+      "pathMappings": [
+        {
+          "localRoot": "${workspaceFolder}",
+          "remoteRoot": "."
+        }
+      ]
+    }
+
+  ]
 }

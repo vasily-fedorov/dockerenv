@@ -39,7 +39,7 @@ lsp:
     # in this case the 'lsp-docker' ('server' section) image name is used
     enabled: true # you can explicitly disable 'dap-docker' by using 'false'
     provider: "python" #<your default language debug provider, double quoted string>
-    template: <your default language debug template, double quoted string>
+    template: "Python :: Docker" #<your default language debug template, double quoted string>
 #    launch_command: <an explicit command if you want to override a default one provided by the debug provider>
     # e.g. if you have installed a debug server in a different directory, not used with 'container' subtype debuggers
 # # single server configuration

@@ -1,6 +1,6 @@
 #+title: Insulator
 
-dockerizing undockerized python app
+dockerizing undockerized not pure python app
 
 compose это язык описания архитектуры приложения
 сейчас везде используется как пример для деплоя, хотя есть пример с рисованием картинки:
