@@ -11,19 +11,19 @@ services:
     build:
       context: .
       dockerfile: ./Dockerfile
+#      additional_contexts:
+#        - project: ${PROJECT}
       args:
         USER_ID: $UID
         USER_NAME: $USER
         PYTHON_VERSION: $PYTHON_VERSION
-        IMAGE: ubuntu:24.04
+        IMAGE: ${IMAGE}
         PROJECT: ${PROJECT}
     ports:
       - 8000:8000
       - 5678:5678 # for debugpy
-#    pid: host
-#networks:
-#  public:
-#  private:
+    depends_on:
+      - redis
 # TODO db rabbitmq celery frontend
 # The commented out section below is an example of how to define a PostgreSQL
 # database that your application can use. `depends_on` tells Docker Compose to
