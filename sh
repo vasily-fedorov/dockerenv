@@ -1,1 +1,1 @@
-docker exec -it dockerizer $*
+docker exec -it dockerenv $*

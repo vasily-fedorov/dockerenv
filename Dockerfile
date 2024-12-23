@@ -2,9 +2,11 @@
 ARG IMAGE=ubuntu:24.04
 FROM $IMAGE AS base
 ARG PYTHON_VERSION=3.12
-ARG USER_ID=1000
-ARG USER_NAME=user
-ARG PROJECT=.
+ARG USER_ID=${UID}
+ARG USER_NAME=${USER}
+ARG PROJECT=src
+ARG BUILD_ROOT_SH=tmp
+ARG BUILD_USER_SH=tmp
 
 ENV PYTHONDONTWRITEBYTECODE=1
 ENV PYTHONUNBUFFERED=1
@@ -20,26 +22,28 @@ RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
     libbz2-dev libreadline-dev libsqlite3-dev curl git \
     libncursesw5-dev xz-utils tk-dev libxml2-dev libxmlsec1-dev libffi-dev liblzma-dev
 
-RUN adduser --disabled-password --uid ${USER_ID} ${USER_NAME}
+RUN adduser --disabled-password --uid $USER_ID $USER_NAME
 
 # pyenv setup
-USER ${USER_NAME}
+USER $USER_NAME
 ENV PYENV_ROOT=/home/$USER_NAME/.pyenv
 ENV PATH=$PYENV_ROOT/shims:$PYENV_ROOT/bin:$PATH
 WORKDIR /home/$USER_NAME/${PROJECT}
 RUN curl https://pyenv.run | bash && CC=gcc pyenv install $PYTHON_VERSION
 RUN pyenv global $PYTHON_VERSION && pyenv rehash
-RUN pyenv virtualenv $PYTHON_VERSION $PROJECT
+RUN pyenv virtualenv $PYTHON_VERSION ${PROJECT}
 
 # project build
 USER root
-WORKDIR /home/$USER_NAME
-COPY ./build.sh ./build.sh
+WORKDIR /root
+COPY ${BUILD_ROOT_SH} ./build.sh
 RUN sh build.sh
 
 USER $USER_NAME
 WORKDIR /home/$USER_NAME/${PROJECT}
-COPY ${PROJECT}/requirements.txt .
+COPY ${BUILD_USER_SH} ./build.sh
+RUN sh build.sh
+COPY ./requirements.txt .
 RUN pip install -r requirements.txt
 RUN pip install debugpy
 

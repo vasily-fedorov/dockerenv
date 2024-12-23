@@ -6,19 +6,20 @@ include:
 services:
   server:
     env_file: .env
-    container_name: dockerizer
+    container_name: dockerenv
     volumes:
-      - ./$PROJECT:/home/$USER/$PROJECT
-      - ./data/.bash_history:/home/$USER/.bash_history
+      - ../:/home/$USER/src
+      - ../dockerenv/data/.bash_history:/home/$USER/.bash_history
     build:
-      context: .
-      dockerfile: ./Dockerfile
+      context: ../.
+      dockerfile: ./dockerenv/Dockerfile
       args:
         USER_ID: $UID
         USER_NAME: $USER
         PYTHON_VERSION: $PYTHON_VERSION
         IMAGE: $IMAGE
-        PROJECT: $PROJECT
+        BUILD_ROOT_SH: $BUILD_ROOT_SH
+        BUILD_USER_SH: $BUILD_USER_SH
     ports:
       - 8000:8000
       - 5678:5678
