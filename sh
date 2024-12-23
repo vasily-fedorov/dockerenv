@@ -1,1 +1,1 @@
-docker exec -it pydev $*
+docker exec -it dockerizer $*

@@ -32,6 +32,8 @@ Dockerizing undockerized "not pure python" app
 Рассмотрим на примере простого проекта https://github.com/django-ve/django-helloworld .
 Находясь в корне нашего проекта:
 #+begin_src sh
+git clone https://github.com/vasily-fedorov/dockerizer.git
+cd dockerizer
 git clone https://github.com/django-ve/django-helloworld.git
 #+end_src
 Редактируем .env:
@@ -52,11 +54,15 @@ apt install -y python3-dev python3-pip python3-virtualenv sqlitebrowser
 docker compose up --build
 #+end_src
 Идем на http://localhost:8000, там стартовая страничка
+Сервер в контейнере ругается на непроеденные миграции. Проводим миграции:
+#+begin_src
+./sh python manage.py migrate
+#+end_src
 ** Использование
 В подкаталог надо положить докеризуемый проект.
  * .env :: в файле указать базовую версию Ubuntu, версию python, каталог проекта, команду запуска в контейнере.
  * compose.yaml :: описать архитектуру проекта, добавить недостающие сервисы в секцию include. Описания стандартных сервисов лежат в каталоге `include`.
- * build.sh :: команда
+ * build.sh :: скрипт установки проекта с правами root в контейнере
 ** Запуск
  * Запуск контейнера:
 #+begin_src sh
@@ -73,7 +79,7 @@ docker compose up --build
 CMD="python -m debugpy --listen 0.0.0.0:5678 manage.py runserver 0.0.0.0:8000"
 #+end_src
 Теперь дебаггер слушает на порту 5678, конфигурация для доступа к нему из vscode в =.vscode/launch.json=.
-* Почему
+* Почему так
 Исходя из постановки задачи получаем:
 1. Базовый image (в отличие от большинства туториалов) берем ubuntu (настраиваемой версии), а не python-minimal. Потому что будем ставить и собирать дополнительные пакеты.
 2. В контейнере запускаем проект не от root и разработку ведем не от root, хотя security здесь не проблема. Потому что хотим похожий на привычный для запуска бэкенда подход.
