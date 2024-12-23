@@ -41,8 +41,18 @@ CMD="python manage.py runserver 0.0.0.0:8000"
 PROJECT=django-helloworld
 PYTHON_VERSION=3.11.10
 IMAGE=ubuntu:22.04
-UID=1002
 #+end_src
+Редактируем build.sh, вставляем пакеты из инструкции django-helloworld:
+#+begin_src sh
+#!/usr/bin/env sh
+apt update
+apt install -y python3-dev python3-pip python3-virtualenv sqlitebrowser
+#+end_src
+Запускаем:
+#+begin_src sh
+docker compose up --build
+#+end_src
+Идем на http://localhost:8000, там стартовая страничка
 ** Использование
 В подкаталог надо положить докеризуемый проект.
 В ./.env указать базовую версию ubuntu, версию python, каталог проекта, id пользователя (вывод `id -u`).
@@ -65,6 +75,7 @@ UID=1002
 9. Редактирование кода идет снаружи контейнера.
 10. Данные, сгенерированные в процессе работы, хранятся в ./data : считаем что даже при пересборке часть внутренних данных нужно сохранить.
 * Потом
+ * Сделать подключаемым к проекту, как virtualenv или pyenv
  * Логи складывать в общее место
  * Добавить другие сервисы (postgresql, clickhouse, rabbitmq, ...)
  * Для отладки собирать отдельный образ поверх базового
@@ -75,7 +86,7 @@ UID=1002
  * Сделать шаблоны конфигурации, чтоб не править конфигурационные файлы
  * Отладка в Emacs
 * Проблемы
- * Отладка в Emacs не работает, работает в  vscode
+ * Отладка в Emacs не работает для Django, работает для скрипта. Работает в  vscode и для Django и для скрипта.
  * docker watch не получилось подключить
 
 * Как работает

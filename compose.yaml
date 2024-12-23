@@ -6,7 +6,7 @@ include:
 services:
   server:
     env_file: .env
-    container_name: pydev
+    container_name: dockerizer
     volumes:
       - ./$PROJECT:/home/$USER/$PROJECT
       - ./data/.bash_history:/home/$USER/.bash_history
