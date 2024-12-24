@@ -30,7 +30,6 @@ Dockerizing undockerized "not pure python" app
 * Как это
 ** Пример
 Рассмотрим на примере простого проекта https://github.com/django-ve/django-helloworld .
-Находясь в корне нашего проекта:
 #+begin_src sh
 git clone https://github.com/django-ve/django-helloworld.git
 cd django-helloworld
@@ -61,7 +60,8 @@ CMD="python manage.py runserver 0.0.0.0:8000"
 #+begin_src sh
 docker compose up --build
 #+end_src
-Идем на http://localhost:8000, там стартовая страничка
+Идем на [[http://localhost:8000][localhost:8000]], там стартовая страничка - смотрим "Hello world!"
+
 Сервер в контейнере ругается на непроведенные миграции. Проводим миграции:
 #+begin_src
 ./sh python manage.py migrate
@@ -132,5 +132,5 @@ CMD="python -m debugpy --listen 0.0.0.0:5678 manage.py runserver 0.0.0.0:8000"
  * Настроить отладку в Emacs
 * Проблемы
  * Отладка в Emacs не работает для Django, работает для скрипта. Работает в  vscode и для Django и для скрипта.
- * docker watch не получилось подключить
+ * Docker watch не получилось подключить
  * От порядка строчек в .env зависит запуск контейнера (CMD нельзя ставить первой)
