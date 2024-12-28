@@ -5,9 +5,6 @@ services:
     networks:
      - default
     volumes:
-     - ../data/redis:/data
+     - ~/tmp/data/redis:/data
     ports:
      - 6379:6379
-#  server:
-#    depends_on:
-#      - redis

@@ -1,17 +1,19 @@
 include:
+  - include/postgresql.yaml
 #  - include/redis.yaml
 #  - include/manticore.yaml
 # ...other services
 
 services:
   server:
+    command: $CMD
     env_file: .env
     container_name: dockerenv
     volumes:
       - ../:/home/$USER/src
-      - ../dockerenv/data/.bash_history:/home/$USER/.bash_history
+      - ~/tmp/data/.bash_history:/home/$USER/.bash_history
     build:
-      context: ../.
+      context: ../
       dockerfile: ./dockerenv/Dockerfile
       args:
         USER_ID: $UID
@@ -20,10 +22,13 @@ services:
         IMAGE: $IMAGE
         BUILD_ROOT_SH: $BUILD_ROOT_SH
         BUILD_USER_SH: $BUILD_USER_SH
+    stdin_open: true # docker run -i
+    tty: true # docker run -t
     ports:
       - 8000:8000
       - 5678:5678
- #   depends_on:
+    depends_on:
+      - postgresql
  #     - redis
  #     ...
 # TODO db rabbitmq celery frontend
