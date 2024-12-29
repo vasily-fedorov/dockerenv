@@ -27,10 +27,10 @@ RUN echo "$USER_NAME ALL=(ALL:ALL) NOPASSWD: ALL" | sudo tee -a /etc/sudoers.d/$
 USER $USER_NAME
 ENV PYENV_ROOT=/home/$USER_NAME/.pyenv
 ENV PATH=$PYENV_ROOT/shims:$PYENV_ROOT/bin:$PATH
-WORKDIR /home/$USER_NAME/$PROJECT
+WORKDIR /workspace
 RUN curl https://pyenv.run | bash && CC=gcc pyenv install $PYTHON_VERSION
 RUN pyenv global $PYTHON_VERSION && pyenv rehash
-RUN pyenv virtualenv $PYTHON_VERSION $PROJECT
+RUN pyenv virtualenv $PYTHON_VERSION workspace
 
 # project build
 USER $USER_NAME

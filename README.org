@@ -20,7 +20,7 @@ Dockerizing "not pure python" app for development
 5. Первый этап докеризации - запуск всего в виртуальной машине
 6. Все результаты запуска build.sh внутри каталога проекта исчезнут. Нужен run.sh - который будет запускаться при запуске контейнера.
 7. Добавить debugpy в requirements.txt
-8. Команду запуска написать в command либо sleep infinity.
+8. Команду запуска написать в command либо sleep infinity. bash
 9. Заходить внутрь контейнера как docker exec -it dockerenv <command> , например bash. А от рута: docker exec -it -u root dockerenv bash
 
 * Зачем это
