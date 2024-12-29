@@ -1,7 +1,7 @@
 services:
   postgresql:
     container_name: postgresql
-    image: postgres
+    image: postgres # docker.io/library/postgres for podman
     restart: always
     volumes:
       - ~/tmp/data/postgresql:/var/lib/postgresql/data
@@ -20,7 +20,7 @@ services:
     #   retries: 5
   pgadmin:
     container_name: pgadmin
-    image: dpage/pgadmin4:latest
+    image: dpage/pgadmin4:latest # docker.io/dpage/pgadmin4:latest for podman
     restart: always
     environment:
       PGADMIN_DEFAULT_EMAIL: no@no.no

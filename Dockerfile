@@ -5,8 +5,8 @@ ARG PYTHON_VERSION=3.12
 ARG USER_ID=${UID}
 ARG USER_NAME=${USER}
 ARG PROJECT=src
-ARG BUILD_ROOT_SH=tmp
-ARG BUILD_USER_SH=tmp
+ARG BUILD_SH=""
+
 
 ENV PYTHONDONTWRITEBYTECODE=1
 ENV PYTHONUNBUFFERED=1
@@ -14,16 +14,16 @@ ENV DEBIAN_FRONTEND=noninteractive
 
 RUN rm -f /etc/apt/apt.conf.d/docker-clean ; echo 'Binary::apt::APT::Keep-Downloaded-Packages "true";' > /etc/apt/apt.conf.d/keep-cache
 
-RUN adduser --disabled-password --uid $USER_ID $USER_NAME
-
 # pyenv setup
 RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
     --mount=type=cache,target=/var/lib/apt,sharing=locked \
     apt update && apt -y install --no-install-recommends --no-install-suggests \
-    adduser python3 bash python3-venv python3-pip gcc \
+    adduser sudo python3 bash python3-venv python3-pip gcc \
     build-essential libssl-dev zlib1g-dev \
     libbz2-dev libreadline-dev libsqlite3-dev curl git \
     libncursesw5-dev xz-utils tk-dev libxml2-dev libxmlsec1-dev libffi-dev liblzma-dev
+RUN adduser --disabled-password --uid $USER_ID $USER_NAME && adduser $USER_NAME sudo
+RUN echo "$USER_NAME ALL=(ALL:ALL) NOPASSWD: ALL" | sudo tee -a /etc/sudoers.d/$USER_NAME
 USER $USER_NAME
 ENV PYENV_ROOT=/home/$USER_NAME/.pyenv
 ENV PATH=$PYENV_ROOT/shims:$PYENV_ROOT/bin:$PATH
@@ -33,19 +33,11 @@ RUN pyenv global $PYTHON_VERSION && pyenv rehash
 RUN pyenv virtualenv $PYTHON_VERSION $PROJECT
 
 # project build
-USER root
-COPY $BUILD_ROOT_SH $BUILD_ROOT_SH
+USER $USER_NAME
+COPY . .
 RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
     --mount=type=cache,target=/var/lib/apt,sharing=locked \
-    sh $BUILD_ROOT_SH
-
-USER $USER_NAME
-#WORKDIR /home/$USER_NAME/$PROJECT
-#COPY $BUILD_USER_SH $BUILD_USER_SH
-
-COPY . .
-RUN --mount=type=cache,target=/home/$USER_NAME/.cache \
-    sh $BUILD_USER_SH
+    sh $BUILD_SH
 
 # Expose the port that the application listens on.
 EXPOSE 8000
