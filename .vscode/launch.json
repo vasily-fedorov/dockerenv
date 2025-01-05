@@ -1,7 +1,7 @@
 {
   "configurations": [
         {
-      "name": "Dockerizer Python Debugger: Remote Attach",
+      "name": "Containerized Python Debugger: Remote Attach",
       "type": "python",
       "request": "attach",
       "connect": {
@@ -10,8 +10,8 @@
       },
       "pathMappings": [
         {
-          "localRoot": "${workspaceFolder}",
-          "remoteRoot": "."
+          "localRoot": "../",
+          "remoteRoot": "/workspace"
         }
       ]
     }

@@ -1,11 +1,11 @@
-include:
-  - include/postgresql.yaml
+#include:
+#  - include/postgresql.yaml
 #  - include/redis.yaml
 #  - include/manticore.yaml
 # ...other services
-
+name: django-helloworld
 services:
-  server:
+  devcontainer:
     command: $CMD # bash # sh -c "python manage.py migrate && python manage.py runserver 0.0.0.0:8000"
     env_file: .env
     container_name: dockerenv
